@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Dumbbell, Apple, LineChart, User, Moon, Sun, Bot } from 'lucide-react';
+import { Home, Dumbbell, Apple, LineChart, User, Bot } from 'lucide-react';
+import { Header } from './components/Header';
 import { Dashboard } from './components/Dashboard';
 import { Workouts } from './components/Workouts';
 import { WorkoutPlayer } from './components/WorkoutPlayer';
@@ -110,108 +111,17 @@ export default function App() {
       largeText ? 'large-text' : ''
     } ${highContrast ? 'high-contrast' : ''}`}>
 
-      {/* TOP DESKTOP & MOBILE HEADER */}
-      <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div
-            onClick={() => setCurrentScreen('dashboard')}
-            className="flex items-center gap-2 cursor-pointer select-none"
-          >
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-black text-xl">
-              🌿
-            </div>
-            <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-white">
-              Age<span className="text-emerald-600 dark:text-emerald-400">Fit</span>
-            </span>
-          </div>
-
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-1">
-            <button
-              onClick={() => setCurrentScreen('dashboard')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                currentScreen === 'dashboard'
-                  ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Home
-            </button>
-            <button
-              onClick={() => setCurrentScreen('exercises')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                currentScreen === 'exercises' || currentScreen === 'workout_overview'
-                  ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Workouts
-            </button>
-            <button
-              onClick={() => setCurrentScreen('nutrition')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                currentScreen === 'nutrition'
-                  ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Food & Water
-            </button>
-            <button
-              onClick={() => setCurrentScreen('progress')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                currentScreen === 'progress'
-                  ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Progress
-            </button>
-            <button
-              onClick={() => setCurrentScreen('settings')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                currentScreen === 'settings'
-                  ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Profile
-            </button>
-            <button
-              onClick={() => setCurrentScreen('chatgpt')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                currentScreen === 'chatgpt'
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20'
-              }`}
-            >
-              <Bot size={14} /> ChatGPT AI
-            </button>
-          </nav>
-
-          {/* Action items */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-              title={darkMode ? "Switch to light theme" : "Switch to dark theme"}
-            >
-              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-
-            {/* Persona Switch Pill */}
-            <button
-              onClick={() => setCurrentScreen('settings')}
-              className="flex items-center gap-2 pl-2 pr-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/60 text-xs font-bold text-slate-700 dark:text-slate-200 hover:shadow-xs transition-all cursor-pointer"
-            >
-              <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">
-                {user.name.charAt(0)}
-              </div>
-              <span className="hidden sm:inline">{user.name}</span>
-            </button>
-          </div>
-        </div>
-      </header>
+      {/* PERSISTENT TOP HEADER WITH LOGO ON EVERY PAGE */}
+      <Header
+        currentScreen={currentScreen}
+        onNavigate={(screen) => {
+          setIsOnboarding(false);
+          setCurrentScreen(screen);
+        }}
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode(!darkMode)}
+        user={user}
+      />
 
       {/* MAIN VIEW AREA */}
       <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 pb-24 md:pb-8">
