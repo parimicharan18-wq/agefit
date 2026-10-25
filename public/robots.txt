@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: sitemap.xml
+Sitemap: https://parimicharan18-wq.github.io/agefit/sitemap.xml
