@@ -3,19 +3,11 @@ import {
   Sparkles,
   CheckCircle2,
   ShieldCheck,
-  Zap,
   Check,
   Activity,
-  Award,
   Clock,
   RotateCw,
-  RefreshCw,
-  Layers,
-  ArrowRight,
-  Flame,
-  Volume2,
-  Droplets,
-  HeartPulse
+  RefreshCw
 } from 'lucide-react';
 import { AutonomousEngine } from '../data/autonomousEngine';
 import type { AutonomousFeature } from '../data/autonomousEngine';
@@ -27,7 +19,7 @@ interface ChatGPTAssistantProps {
   user: UserProfile;
 }
 
-export const ChatGPTAssistant: React.FC<ChatGPTAssistantProps> = ({ user }) => {
+export const ChatGPTAssistant: React.FC<ChatGPTAssistantProps> = ({ user: _user }) => {
   const [features, setFeatures] = useState<AutonomousFeature[]>(() => AutonomousEngine.getFeatures());
   const [errorLogs, setErrorLogs] = useState<ErrorAuditLog[]>(() => AutonomousErrorEngine.getLogs());
   const [lastCheckTime, setLastCheckTime] = useState<string>(() => new Date().toLocaleTimeString());

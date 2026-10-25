@@ -1,0 +1,49 @@
+name: Periodic Website Health & Uptime Probe
+
+on:
+  schedule:
+    # Runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    name: Uptime & Asset Integrity Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe Public AgeFit Website
+        run: |
+          node -e "
+            const https = require('https');
+            const targetUrl = 'https://parimicharan18-wq.github.io/agefit/';
+
+            function probe(attempt) {
+              console.log('Probing ' + targetUrl + ' (Attempt ' + attempt + ')...');
+              https.get(targetUrl, (res) => {
+                console.log('HTTP Status Code:', res.statusCode);
+                if (res.statusCode >= 200 && res.statusCode < 400) {
+                  console.log('✓ AgeFit website is live, responsive, and healthy.');
+                  process.exit(0);
+                } else if (attempt < 3) {
+                  console.log('Retrying in 5 seconds...');
+                  setTimeout(() => probe(attempt + 1), 5000);
+                } else {
+                  console.error('Website returned failure code: ' + res.statusCode);
+                  process.exit(1);
+                }
+              }).on('error', (err) => {
+                if (attempt < 3) {
+                  console.log('Network warning: ' + err.message + '. Retrying...');
+                  setTimeout(() => probe(attempt + 1), 5000);
+                } else {
+                  console.error('Fatal probe connection error: ' + err.message);
+                  process.exit(1);
+                }
+              });
+            }
+
+            probe(1);
+          "

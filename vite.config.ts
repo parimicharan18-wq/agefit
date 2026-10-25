@@ -10,4 +10,10 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
+  // @ts-expect-error vitest config types
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test-setup.ts']
+  }
 })

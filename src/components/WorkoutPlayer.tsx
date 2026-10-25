@@ -25,34 +25,38 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
   const [isMuted, setIsMuted] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    if (currentWorkoutEx) {
-      setTimeLeft(currentWorkoutEx.durationSeconds);
-      setIsActive(false);
-    }
-  }, [currentIndex, currentWorkoutEx]);
+  // Reset timer on exercise switch
+  const [prevIndex, setPrevIndex] = useState(initialExerciseIndex);
+  if (currentIndex !== prevIndex) {
+    setPrevIndex(currentIndex);
+    setTimeLeft(currentWorkoutEx ? currentWorkoutEx.durationSeconds : 30);
+    setIsActive(false);
+  }
 
   useEffect(() => {
-    if (isActive && timeLeft > 0) {
-      timerRef.current = window.setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 4 && prev > 1) {
-            sound.playCountdown();
-          } else if (prev === 1) {
+    if (!isActive) return;
+
+    timerRef.current = window.setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          // When reaching 0, handle transition
+          if (currentIndex < workout.exercises.length - 1) {
             sound.playExerciseDone();
+            setCurrentIndex(c => c + 1);
+            return 0;
+          } else {
+            sound.playVictory();
+            setIsActive(false);
+            onComplete();
+            return 0;
           }
-          return prev - 1;
-        });
-      }, 1000);
-    } else if (timeLeft === 0 && isActive) {
-      if (currentIndex < workout.exercises.length - 1) {
-        setCurrentIndex(c => c + 1);
-      } else {
-        setIsActive(false);
-        sound.playVictory();
-        onComplete();
-      }
-    }
+        }
+        if (prev <= 4) {
+          sound.playCountdown();
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
     return () => {
       if (timerRef.current) {
@@ -60,7 +64,7 @@ export const WorkoutPlayer: React.FC<WorkoutPlayerProps> = ({
         timerRef.current = null;
       }
     };
-  }, [isActive, timeLeft, currentIndex, workout.exercises.length, onComplete]);
+  }, [isActive, currentIndex, workout.exercises.length, onComplete]);
 
   const toggleTimer = () => {
     if (!isActive) sound.playStart();
