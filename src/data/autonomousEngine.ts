@@ -29,7 +29,7 @@ export const INITIAL_AUTONOMOUS_FEATURES: AutonomousFeature[] = [
     benefit: 'Automatically opens hips, ankles, and neck before work or workouts.',
     status: 'active',
     version: 'v2.4',
-    lastUpdated: 'Just now'
+    lastUpdated: 'Live Updated ' + today
   },
   {
     id: 'feat-auto-hydration',
@@ -41,7 +41,7 @@ export const INITIAL_AUTONOMOUS_FEATURES: AutonomousFeature[] = [
     benefit: 'Auto-adapts daily water intake based on your workout intensity.',
     status: 'active',
     version: 'v3.1',
-    lastUpdated: 'Just now'
+    lastUpdated: 'Live Updated ' + today
   },
   {
     id: 'feat-auto-voice',
@@ -53,7 +53,7 @@ export const INITIAL_AUTONOMOUS_FEATURES: AutonomousFeature[] = [
     benefit: 'Browser voice synthesizes countdowns so you never have to look at the screen.',
     status: 'active',
     version: 'v4.0',
-    lastUpdated: 'Just now'
+    lastUpdated: 'Live Updated ' + today
   },
   {
     id: 'feat-auto-streak-rewards',
@@ -65,7 +65,7 @@ export const INITIAL_AUTONOMOUS_FEATURES: AutonomousFeature[] = [
     benefit: 'Celebrates 3-Day, 7-Day, and 30-Day streaks with animated badges.',
     status: 'active',
     version: 'v2.0',
-    lastUpdated: 'Just now'
+    lastUpdated: 'Live Updated ' + today
   },
   {
     id: 'feat-auto-senior-chair',
@@ -77,7 +77,7 @@ export const INITIAL_AUTONOMOUS_FEATURES: AutonomousFeature[] = [
     benefit: 'Replaces jumping moves with seated posture and balance drills.',
     status: 'active',
     version: 'v1.8',
-    lastUpdated: 'Just now'
+    lastUpdated: 'Live Updated ' + today
   },
   {
     id: 'feat-auto-metabolic-burn',
@@ -89,7 +89,7 @@ export const INITIAL_AUTONOMOUS_FEATURES: AutonomousFeature[] = [
     benefit: 'Maximizes calorie expenditure with zero gym equipment needed.',
     status: 'active',
     version: 'v3.5',
-    lastUpdated: 'Just now'
+    lastUpdated: 'Live Updated ' + today
   }
 ];
 
