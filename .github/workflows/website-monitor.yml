@@ -2,8 +2,11 @@ name: Periodic Website Health & Uptime Probe
 
 on:
   schedule:
-    # Runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    # Runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC) automatically for free
     - cron: '0 */6 * * *'
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -11,39 +14,54 @@ permissions:
 
 jobs:
   probe:
-    name: Uptime & Asset Integrity Check
+    name: Dual Uptime & Asset Probe (GitHub Pages & Vercel)
     runs-on: ubuntu-latest
     steps:
-      - name: Probe Public AgeFit Website
+      - name: Probe Public AgeFit Deployments
         run: |
           node -e "
             const https = require('https');
-            const targetUrl = 'https://parimicharan18-wq.github.io/agefit/';
 
-            function probe(attempt) {
-              console.log('Probing ' + targetUrl + ' (Attempt ' + attempt + ')...');
-              https.get(targetUrl, (res) => {
-                console.log('HTTP Status Code:', res.statusCode);
-                if (res.statusCode >= 200 && res.statusCode < 400) {
-                  console.log('✓ AgeFit website is live, responsive, and healthy.');
-                  process.exit(0);
-                } else if (attempt < 3) {
-                  console.log('Retrying in 5 seconds...');
-                  setTimeout(() => probe(attempt + 1), 5000);
-                } else {
-                  console.error('Website returned failure code: ' + res.statusCode);
-                  process.exit(1);
+            const targets = [
+              'https://parimicharan18-wq.github.io/agefit/',
+              'https://agefit-app.vercel.app/'
+            ];
+
+            function checkUrl(url) {
+              return new Promise((resolve, reject) => {
+                function attemptCheck(attempt) {
+                  console.log('Testing: ' + url + ' (Attempt ' + attempt + ')');
+                  https.get(url, (res) => {
+                    console.log('Status for ' + url + ':', res.statusCode);
+                    if (res.statusCode >= 200 && res.statusCode < 400) {
+                      console.log('✓ Verified: ' + url + ' is healthy.');
+                      resolve();
+                    } else if (attempt < 3) {
+                      console.log('Retrying ' + url + ' in 3 seconds...');
+                      setTimeout(() => attemptCheck(attempt + 1), 3000);
+                    } else {
+                      reject(new Error('Status ' + res.statusCode + ' for ' + url));
+                    }
+                  }).on('error', (err) => {
+                    if (attempt < 3) {
+                      console.log('Network warning: ' + err.message + '. Retrying...');
+                      setTimeout(() => attemptCheck(attempt + 1), 3000);
+                    } else {
+                      reject(err);
+                    }
+                  });
                 }
-              }).on('error', (err) => {
-                if (attempt < 3) {
-                  console.log('Network warning: ' + err.message + '. Retrying...');
-                  setTimeout(() => probe(attempt + 1), 5000);
-                } else {
-                  console.error('Fatal probe connection error: ' + err.message);
-                  process.exit(1);
-                }
+                attemptCheck(1);
               });
             }
 
-            probe(1);
+            Promise.all(targets.map(checkUrl))
+              .then(() => {
+                console.log('All public AgeFit deployments are live and healthy!');
+                process.exit(0);
+              })
+              .catch((err) => {
+                console.error('Probe failed:', err.message);
+                process.exit(1);
+              });
           "
